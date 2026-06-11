@@ -10,6 +10,7 @@ from mcp.server import FastMCP
 DEFAULT_TIMEOUT_SECONDS: Final[int] = 30
 MAX_TIMEOUT_SECONDS: Final[int] = 300
 GRACEFUL_SHUTDOWN_SECONDS: Final[int] = 2
+MCP_README_PATH: Final[Path] = Path(__file__).resolve().parent / "mcpreadme.md"
 
 mcp = FastMCP(
     "shellserver",
@@ -94,6 +95,18 @@ async def _run_shell_command(
         _decode_output(stderr_bytes),
         returncode,
     )
+
+
+@mcp.resource(
+    "doc://mcp-python-sdk-readme",
+    name="mcp-python-sdk-readme",
+    title="MCP Python SDK Documentation",
+    description="The MCP Python SDK README (mcpreadme.md) bundled with the mcpservers project.",
+    mime_type="text/markdown",
+)
+def mcp_python_sdk_readme() -> str:
+    """Return the MCP Python SDK documentation."""
+    return MCP_README_PATH.read_text(encoding="utf-8")
 
 
 @mcp.tool(name="terminal")

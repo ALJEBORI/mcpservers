@@ -7,15 +7,29 @@ from typing import Final
 
 from mcp.server import FastMCP
 
+# Define your configuration constants here at the top
+README_FILENAME: Final[str] = "mcpreadme.md"
 DEFAULT_TIMEOUT_SECONDS: Final[int] = 30
 MAX_TIMEOUT_SECONDS: Final[int] = 300
 GRACEFUL_SHUTDOWN_SECONDS: Final[int] = 2
-MCP_README_PATH: Final[Path] = Path(__file__).resolve().parent / "mcpreadme.md"
 
 mcp = FastMCP(
     "shellserver",
     instructions="Run shell commands using the terminal tool and access project documentation.",
 )
+
+
+def _find_readme() -> Path | None:
+    """Look for the target README file across likely directories to guarantee it is found."""
+    candidates = [
+        Path(__file__).resolve().parent / README_FILENAME,
+        Path.cwd() / README_FILENAME,
+        Path.home() / "mcpservers" / README_FILENAME,
+    ]
+    for path in candidates:
+        if path.is_file():
+            return path
+    return None
 
 
 def _decode_output(data: bytes | None) -> str:
@@ -101,17 +115,25 @@ async def _run_shell_command(
     "doc://mcp-python-sdk-readme",
     name="mcp-python-sdk-readme",
     title="MCP Python SDK Documentation",
-    description="The MCP Python SDK README (mcpreadme.md) bundled with the mcpservers project.",
+    description=f"The MCP Python SDK README ({README_FILENAME}) bundled with the mcpservers project.",
     mime_type="text/markdown",
 )
 def mcp_python_sdk_readme() -> str:
-    """Return the MCP Python SDK documentation safely. FastMCP runs this in a threadpool."""
+    """Return the MCP Python SDK documentation safely."""
+    readme_path = _find_readme()
+    if not readme_path:
+        return f"Error: {README_FILENAME} file could not be found in the server or execution directory."
+    
     try:
-        if not MCP_README_PATH.exists():
-            return f"Error: Documentation file not found at expected location: {MCP_README_PATH}"
-        return MCP_README_PATH.read_text(encoding="utf-8")
+        return readme_path.read_text(encoding="utf-8")
     except Exception as e:
         return f"Error reading resource: {str(e)}"
+
+
+@mcp.tool(name="view_mcp_readme")
+def view_mcp_readme() -> str:
+    """Read and return the contents of the target mcpreadme.md file directly."""
+    return mcp_python_sdk_readme()
 
 
 @mcp.tool(name="terminal")

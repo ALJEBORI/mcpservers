@@ -1,4 +1,4 @@
-"""MCP server that exposes a terminal tool for running shell commands."""
+"""MCP server that exposes a terminal tool for running shell commands and project documentation."""
 
 import asyncio
 import sys
@@ -14,7 +14,7 @@ MCP_README_PATH: Final[Path] = Path(__file__).resolve().parent / "mcpreadme.md"
 
 mcp = FastMCP(
     "shellserver",
-    instructions="Run shell commands using the terminal tool.",
+    instructions="Run shell commands using the terminal tool and access project documentation.",
 )
 
 
@@ -105,8 +105,13 @@ async def _run_shell_command(
     mime_type="text/markdown",
 )
 def mcp_python_sdk_readme() -> str:
-    """Return the MCP Python SDK documentation."""
-    return MCP_README_PATH.read_text(encoding="utf-8")
+    """Return the MCP Python SDK documentation safely. FastMCP runs this in a threadpool."""
+    try:
+        if not MCP_README_PATH.exists():
+            return f"Error: Documentation file not found at expected location: {MCP_README_PATH}"
+        return MCP_README_PATH.read_text(encoding="utf-8")
+    except Exception as e:
+        return f"Error reading resource: {str(e)}"
 
 
 @mcp.tool(name="terminal")

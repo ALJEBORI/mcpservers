@@ -1,0 +1,31 @@
+# Project Rules & Guidelines
+
+This workspace houses a minimal Model Context Protocol (MCP) server named `shellserver`, built with the MCP Python SDK (`FastMCP`) using Python 3.14+.
+
+## 🌐 Official Documentation & References
+When designing tools, inputs, schemas, or resource templates, align strictly with the official specification standard. If you lack context on a framework pattern or need to verify a utility method, use your browser/fetch tools to read up on these live references:
+- **Core MCP Documentation:** https://modelcontextprotocol.io
+- **Official Python SDK Source:** https://github.com/modelcontextprotocol/python-sdk
+
+## Technical Stack & Tooling
+
+- **Python Version**: Python 3.14+ (leverage modern annotations such as `str | None`, `list[str]`, and `typing.Final`).
+- **Package Management**: Use astral's [uv](https://docs.astral.sh/uv/) for dependencies, virtual environments, and running commands (`uv sync`, `uv run`, etc.).
+- **Server Framework**: [FastMCP](https://github.com/modelcontextprotocol/python-sdk).
+
+## Core Project Guidelines
+
+### 1. Python & Async Standards
+- Write clean, asynchronous code using standard library `asyncio` for I/O bound tasks and subprocess spawns.
+- Use strict type annotations wherever possible.
+- Avoid external dependencies unless explicitly requested.
+
+### 2. MCP Server Configuration & Subprocess Execution
+- All shell command execution should handle timeouts, clean error trapping, and graceful shutdowns (`SIGTERM` then `SIGKILL`).
+- Strictly validate user input before executing commands via subprocess to prevent command injection, directory traversal, or empty commands.
+- Support standard terminal parameters like `working_directory` and custom `timeout_seconds`.
+
+### 3. Workflow & Development
+- **Directory Scope**: Always execute commands related to shellserver inside the `shellserver` subdirectory if appropriate (e.g., `cd shellserver && uv run server.py`).
+- **Testing**: Test changes asynchronously or via simple test scripts such as smoke tests without spinning up a full MCP client.
+- **Portability**: Keep paths absolute or configure them gracefully so that clients (e.g., Cursor) can attach easily via stdio.

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  
+  "agent": {
+    // This registers your shellserver mode from its sub-folder
+    "shellserver": {
+      "description": "Specialized agent for developing the shellserver tool",
+      "instructions": "shellserver/.kilo/agents/shellserver.md",
+      "mode": "all"
+    }
+    
+    // When you create a new MCP project later, you just register it right here:
+    // "another-mcp": {
+    //   "description": "Specialized agent for your next tool",
+    //   "instructions": "another-mcp/.kilo/agents/another-mcp.md",
+    //   "mode": "all"
+    // }
+  }
+}

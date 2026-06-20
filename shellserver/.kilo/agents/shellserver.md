@@ -2,7 +2,7 @@
 
 This workspace houses a minimal Model Context Protocol (MCP) server named `shellserver`, built with the MCP Python SDK (`FastMCP`) using Python 3.14+.
 
-## 🌐 Official Documentation & References
+## MCP Documentation & References
 When designing tools, inputs, schemas, or resource templates, align strictly with the official specification standard. If you lack context on a framework pattern or need to verify a utility method, use your browser/fetch tools to read up on these live references:
 - **Core MCP Documentation:** https://modelcontextprotocol.io
 - **Official Python SDK Source:** https://github.com/modelcontextprotocol/python-sdk
